@@ -89,8 +89,30 @@ const Player: React.FC<PlayerProps> = ({ grid }) => {
       grid[y][z][x] !== 0 &&
       grid[y][z][x] !== 4 &&
       grid[y][z][x] !== 5 &&
-      grid[y][z][x] !== 6
+      grid[y][z][x] !== 6 &&
+      !(grid[y][z][x] >= 10 && grid[y][z][x] <= 15)
     );
+  };
+
+  // ワープ先の座標を計算
+  const getWarpDestination = (
+    currentBlockId: number
+  ): [number, number, number] | null => {
+    // ペアのブロックIDを取得
+    const pairId =
+      currentBlockId % 2 === 0 ? currentBlockId + 1 : currentBlockId - 1;
+
+    // グリッド内でペアブロックを検索
+    for (let y = 0; y < grid.length; y++) {
+      for (let z = 0; z < grid[y].length; z++) {
+        for (let x = 0; x < grid[y][z].length; x++) {
+          if (grid[y][z][x] === pairId) {
+            return gridToWorld(x, y, z);
+          }
+        }
+      }
+    }
+    return null;
   };
 
   // 目の前のブロックのIDを取得
@@ -259,6 +281,24 @@ const Player: React.FC<PlayerProps> = ({ grid }) => {
               const successAudio = new Audio("/assets/se/clear.mp3");
               successAudio.play();
               return prev; // ゴールに到達した場合はそのままの位置
+            }
+
+            // ワープブロックの処理
+            if (frontBlockId && frontBlockId >= 10 && frontBlockId <= 15) {
+              const warpDestination = getWarpDestination(frontBlockId);
+              if (warpDestination) {
+                console.log(
+                  `ワープします！ ブロックID: ${frontBlockId} → ペアブロック`
+                );
+                const warpAudio = new Audio("/assets/se/warp.mp3");
+                warpAudio.play();
+                return warpDestination;
+              } else {
+                console.log("ワープ先が見つかりません");
+                const failAudio = new Audio("/assets/se/ui-note.mp3");
+                failAudio.play();
+                return prev;
+              }
             }
             // 通常の前進
             const newPos: [number, number, number] = [
