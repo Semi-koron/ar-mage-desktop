@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, use } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
@@ -21,6 +21,11 @@ const Player: React.FC<PlayerProps> = ({ grid }) => {
     "/assets/textures/cube/test5.png",
     "/assets/textures/cube/test6.png",
   ]);
+
+  useEffect(() => {
+    const pos = gridToWorld(0, 1, 0);
+    setPosition(pos);
+  }, [grid]);
 
   // 方向ベクトル
   const getDirectionVector = (rot: number): [number, number, number] => {
@@ -80,7 +85,12 @@ const Player: React.FC<PlayerProps> = ({ grid }) => {
     ) {
       return false;
     }
-    return grid[y][z][x] !== 0 && grid[y][z][x] !== 4 && grid[y][z][x] !== 5;
+    return (
+      grid[y][z][x] !== 0 &&
+      grid[y][z][x] !== 4 &&
+      grid[y][z][x] !== 5 &&
+      grid[y][z][x] !== 6
+    );
   };
 
   // 目の前のブロックのIDを取得
@@ -106,6 +116,27 @@ const Player: React.FC<PlayerProps> = ({ grid }) => {
     return blockId === 0 ? null : blockId;
   };
 
+  // 目の前のブロックの下のブロックのIDを取得
+  const getFrontBlockBelowId = (): number | null => {
+    const [dx, dy, dz] = getDirectionVector(rotation);
+    const [currentX, currentY, currentZ] = worldToGrid(...position);
+    const frontX = currentX + dx;
+    const frontY = currentY + dy - 1; // 下のブロックを取得
+    const frontZ = currentZ + dz;
+    if (
+      frontY < 0 ||
+      frontY >= grid.length ||
+      frontZ < 0 ||
+      frontZ >= grid[frontY].length ||
+      frontX < 0 ||
+      frontX >= grid[frontY][frontZ].length
+    ) {
+      return null;
+    }
+    const blockId = grid[frontY][frontZ][frontX];
+    return blockId === 0 ? null : blockId;
+  };
+
   // キーボードイベントハンドラ
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -123,7 +154,113 @@ const Player: React.FC<PlayerProps> = ({ grid }) => {
         case "w":
           // 前進
           const [dx, dy, dz] = getDirectionVector(rotation);
+
           setPosition((prev) => {
+            // 目の前のブロックIDを取得
+            const frontBlockId = getFrontBlockId();
+
+            const frontBlockBelowId = getFrontBlockBelowId();
+            if (frontBlockBelowId === null) {
+              console.log("目の前の下にブロックはありません");
+              const failAudio = new Audio("/assets/se/ui-note.mp3");
+              failAudio.play();
+              return prev;
+            }
+
+            if (frontBlockBelowId === 4 || frontBlockBelowId === 5) {
+              const [currentX, currentY, currentZ] = worldToGrid(...prev);
+              let fallHeight = 1;
+
+              // 下のブロックもハシゴかチェックして連続で降りる
+              while (true) {
+                const belowY = currentY - fallHeight;
+                if (
+                  belowY >= 0 &&
+                  belowY < grid.length &&
+                  currentZ + dz >= 0 &&
+                  currentZ + dz < grid[belowY].length &&
+                  currentX + dx >= 0 &&
+                  currentX + dx < grid[belowY][currentZ + dz].length
+                ) {
+                  const belowBlockId =
+                    grid[belowY][currentZ + dz][currentX + dx];
+                  if (belowBlockId === 4 || belowBlockId === 5) {
+                    fallHeight++;
+                    continue;
+                  }
+                }
+                break;
+              }
+
+              const fallPos: [number, number, number] = [
+                prev[0] + dx,
+                prev[1] - fallHeight + 1,
+                prev[2] + dz,
+              ];
+
+              // 音声を再生
+              const audio = new Audio("/assets/se/wood.mp3");
+              audio.play();
+              return fallPos;
+            }
+
+            // 目の前がハシゴ（id 4 または 5）の場合は上に登る
+            if (frontBlockId === 4 || frontBlockId === 5) {
+              const [currentX, currentY, currentZ] = worldToGrid(...prev);
+              let climbHeight = 1;
+
+              // 上のブロックもハシゴかチェックして連続で登る
+              while (true) {
+                const aboveY = currentY + climbHeight;
+                if (
+                  aboveY >= 0 &&
+                  aboveY < grid.length &&
+                  currentZ + dz >= 0 &&
+                  currentZ + dz < grid[aboveY].length &&
+                  currentX + dx >= 0 &&
+                  currentX + dx < grid[aboveY][currentZ + dz].length
+                ) {
+                  const aboveBlockId =
+                    grid[aboveY][currentZ + dz][currentX + dx];
+                  if (aboveBlockId === 4 || aboveBlockId === 5) {
+                    climbHeight++;
+                    continue;
+                  }
+                }
+                break;
+              }
+
+              const climbPos: [number, number, number] = [
+                prev[0] + dx,
+                prev[1] + climbHeight,
+                prev[2] + dz,
+              ];
+
+              // 移動先にブロックがないかチェック
+              const [climbGridX, climbGridY, climbGridZ] = worldToGrid(
+                ...climbPos
+              );
+              if (hasBlockAt(climbGridX, climbGridY, climbGridZ)) {
+                console.log("移動できません: ブロックがあります");
+                const failAudio = new Audio("/assets/se/ui-note.mp3");
+                failAudio.play();
+                return prev;
+              }
+
+              // 音声を再生
+              const audio = new Audio("/assets/se/wood.mp3");
+              audio.play();
+              return climbPos;
+            }
+
+            if (frontBlockId === 6) {
+              // ゴールに到達
+              console.log("ゴールに到達しました！");
+              const successAudio = new Audio("/assets/se/clear.mp3");
+              successAudio.play();
+              return prev; // ゴールに到達した場合はそのままの位置
+            }
+            // 通常の前進
             const newPos: [number, number, number] = [
               prev[0] + dx,
               prev[1] + dy,

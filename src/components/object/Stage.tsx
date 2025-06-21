@@ -1,5 +1,6 @@
 import React from "react";
 import Ladder from "./Ladder";
+import Goal from "./Goal";
 
 type BlockGrid = number[][][];
 
@@ -56,6 +57,14 @@ const Stage: React.FC<StageProps> = ({ grid }) => {
       case 5:
         return (
           <Ladder
+            position={position}
+            rotation={[0, Math.PI / 2, 0]}
+            key={`${position[0]}-${position[1]}-${position[2]}`}
+          />
+        );
+      case 6:
+        return (
+          <Goal
             position={position}
             rotation={[0, Math.PI / 2, 0]}
             key={`${position[0]}-${position[1]}-${position[2]}`}

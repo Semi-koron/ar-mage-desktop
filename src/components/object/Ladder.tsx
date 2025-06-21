@@ -14,13 +14,13 @@ const Ladder: React.FC<LadderProps> = ({ position, rotation, color }) => {
     console.error("Invalid position for Ladder component");
     return null;
   }
-  
+
   // モデルをクローンして独立したインスタンスを作成
   const clonedModel = ladderModel.clone();
   clonedModel.traverse((child) => {
     if (child instanceof THREE.Mesh) {
       child.material = new THREE.MeshStandardMaterial({
-        color: color ? color : "brown",
+        color: color ? color : "orange",
       });
     }
   });
