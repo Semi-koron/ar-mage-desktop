@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, use } from "react";
+import React, { useRef, useState, useEffect, type Dispatch } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
@@ -7,9 +7,11 @@ type BlockGrid = number[][][];
 
 interface PlayerProps {
   grid: BlockGrid;
+  isOnOff: boolean; // オンオフブロックの状態を受け取る
+  handleLever: () => void;
 }
 
-const Player: React.FC<PlayerProps> = ({ grid }) => {
+const Player: React.FC<PlayerProps> = ({ grid, isOnOff, handleLever }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const [position, setPosition] = useState<[number, number, number]>([0, 0, 0]);
   const [rotation, setRotation] = useState(0); // 0=北, 1=東, 2=南, 3=西
@@ -25,7 +27,7 @@ const Player: React.FC<PlayerProps> = ({ grid }) => {
   useEffect(() => {
     const pos = gridToWorld(0, 1, 0);
     setPosition(pos);
-  }, [grid]);
+  }, []);
 
   // 方向ベクトル
   const getDirectionVector = (rot: number): [number, number, number] => {
@@ -182,7 +184,11 @@ const Player: React.FC<PlayerProps> = ({ grid }) => {
             const frontBlockId = getFrontBlockId();
 
             const frontBlockBelowId = getFrontBlockBelowId();
-            if (frontBlockBelowId === null) {
+            if (
+              frontBlockBelowId === null ||
+              (frontBlockBelowId === 7 && !isOnOff) ||
+              (frontBlockBelowId === 8 && isOnOff)
+            ) {
               console.log("目の前の下にブロックはありません");
               const failAudio = new Audio("/assets/se/ui-note.mp3");
               failAudio.play();
@@ -327,6 +333,13 @@ const Player: React.FC<PlayerProps> = ({ grid }) => {
           const frontBlockId = getFrontBlockId();
           if (frontBlockId !== null) {
             console.log(`目の前のブロックID: ${frontBlockId}`);
+            if (frontBlockId === 9) {
+              // レバー操作
+              console.log("レバーを操作します");
+              const leverAudio = new Audio("/assets/se/lever.mp3");
+              leverAudio.play();
+              handleLever();
+            }
           } else {
             console.log("目の前にブロックはありません");
           }

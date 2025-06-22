@@ -1,9 +1,8 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrthographicCamera } from "@react-three/drei";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Stage from "../../object/Stage";
 import Player from "../../object/Player";
-import Ladder from "../../object/Ladder";
 
 const CameraController = () => {
   const { camera, gl } = useThree();
@@ -36,6 +35,7 @@ const CameraController = () => {
 };
 
 const GamePage = () => {
+  const [onOff, setOnOff] = useState(false);
   const gameGrid = [
     [
       [1, 1, 1, 1, 1],
@@ -45,11 +45,11 @@ const GamePage = () => {
     [
       [0, 2, 0, 2, 10],
       [0, 0, 0, 0, 0],
-      [0, 2, 0, 2, 5],
+      [0, 2, 9, 2, 5],
     ],
     [
-      [0, 2, 0, 2, 0],
-      [0, 2, 0, 2, 0],
+      [0, 2, 8, 2, 7],
+      [0, 2, 8, 2, 7],
       [0, 2, 0, 2, 5],
     ],
     [
@@ -65,9 +65,13 @@ const GamePage = () => {
       <CameraController />
       <ambientLight intensity={0.3} />
       <directionalLight position={[5, 5, 5]} intensity={0.8} />
-      <directionalLight position={[-3, 2, -3]} intensity={0.4} />
-      <Stage grid={gameGrid} />
-      <Player grid={gameGrid} />
+      <directionalLight position={[-3, 2, 1]} intensity={0.4} />
+      <Stage grid={gameGrid} isOnOff={onOff} />
+      <Player
+        grid={gameGrid}
+        handleLever={() => setOnOff((prev) => !prev)}
+        isOnOff={onOff}
+      />
     </Canvas>
   );
 };

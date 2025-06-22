@@ -2,14 +2,18 @@ import React from "react";
 import Ladder from "./Ladder";
 import Goal from "./Goal";
 import WarpBlock from "./WarpBlock";
+import OnOffBlock from "./OnOffBlock";
+import LeverBlock from "./Lever";
+import OffOnBlock from "./OffOnBlock";
 
 type BlockGrid = number[][][];
 
 interface StageProps {
   grid: BlockGrid;
+  isOnOff: boolean; // オンオフブロックの状態を受け取る
 }
 
-const Stage: React.FC<StageProps> = ({ grid }) => {
+const Stage: React.FC<StageProps> = ({ grid, isOnOff }) => {
   const getBlock = (
     blockType: number,
     position: [number, number, number]
@@ -68,6 +72,33 @@ const Stage: React.FC<StageProps> = ({ grid }) => {
           <Goal
             position={position}
             rotation={[0, Math.PI / 2, 0]}
+            key={`${position[0]}-${position[1]}-${position[2]}`}
+          />
+        );
+      case 7:
+        return (
+          <OnOffBlock
+            isOn={isOnOff}
+            position={position}
+            rotation={[0, 0, 0]}
+            key={`${position[0]}-${position[1]}-${position[2]}`}
+          />
+        );
+      case 8:
+        return (
+          <OffOnBlock
+            isOn={isOnOff}
+            position={position}
+            rotation={[0, 0, 0]}
+            key={`${position[0]}-${position[1]}-${position[2]}`}
+          />
+        );
+      case 9:
+        return (
+          <LeverBlock
+            position={position}
+            rotation={[0, 0, 0]}
+            isOn={isOnOff}
             key={`${position[0]}-${position[1]}-${position[2]}`}
           />
         );
