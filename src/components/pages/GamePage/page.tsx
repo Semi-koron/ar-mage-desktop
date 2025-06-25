@@ -3,6 +3,8 @@ import { OrthographicCamera } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import Stage from "../../object/Stage";
 import Player from "../../object/Player";
+import useWebsocket from "../../../hooks/useWebsocket";
+import { makeGimickData, makeStageData } from "../../../util/websocketData";
 
 const CameraController = () => {
   const { camera, gl } = useThree();
@@ -35,6 +37,7 @@ const CameraController = () => {
 };
 
 const GamePage = () => {
+  const { sendMessage, isConnected } = useWebsocket("test");
   const [onOff, setOnOff] = useState(false);
   const gameGrid = [
     [
@@ -59,6 +62,17 @@ const GamePage = () => {
     ],
   ];
 
+  useEffect(() => {
+    const onOffData = makeGimickData("onOff", onOff);
+    sendMessage(JSON.stringify(onOffData));
+  }, [onOff]);
+
+  useEffect(() => {
+    if (!isConnected) return;
+    const stageData = makeStageData(gameGrid);
+    sendMessage(JSON.stringify(stageData));
+  }, [isConnected]);
+
   return (
     <Canvas>
       <OrthographicCamera makeDefault zoom={50} near={0.1} far={1000} />
@@ -71,6 +85,7 @@ const GamePage = () => {
         grid={gameGrid}
         handleLever={() => setOnOff((prev) => !prev)}
         isOnOff={onOff}
+        sendMessage={sendMessage}
       />
     </Canvas>
   );

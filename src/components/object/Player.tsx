@@ -1,7 +1,8 @@
-import React, { useRef, useState, useEffect, type Dispatch } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
+import { makePlayerData } from "../../util/websocketData";
 
 type BlockGrid = number[][][];
 
@@ -9,9 +10,15 @@ interface PlayerProps {
   grid: BlockGrid;
   isOnOff: boolean; // オンオフブロックの状態を受け取る
   handleLever: () => void;
+  sendMessage: (message: string) => void;
 }
 
-const Player: React.FC<PlayerProps> = ({ grid, isOnOff, handleLever }) => {
+const Player: React.FC<PlayerProps> = ({
+  grid,
+  isOnOff,
+  handleLever,
+  sendMessage,
+}) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const [position, setPosition] = useState<[number, number, number]>([0, 0, 0]);
   const [rotation, setRotation] = useState(0); // 0=北, 1=東, 2=南, 3=西
@@ -28,6 +35,11 @@ const Player: React.FC<PlayerProps> = ({ grid, isOnOff, handleLever }) => {
     const pos = gridToWorld(0, 1, 0);
     setPosition(pos);
   }, []);
+
+  useEffect(() => {
+    const playerData = makePlayerData(position, rotation);
+    sendMessage(JSON.stringify(playerData));
+  }, [position, rotation]);
 
   // 方向ベクトル
   const getDirectionVector = (rot: number): [number, number, number] => {
