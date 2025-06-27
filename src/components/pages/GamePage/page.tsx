@@ -5,6 +5,8 @@ import Stage from "../../object/Stage";
 import Player from "../../object/Player";
 import useWebsocket from "../../../hooks/useWebsocket";
 import { makeGimickData, makeStageData } from "../../../util/websocketData";
+import { useParams } from "react-router-dom";
+import QRCode from "react-qr-code";
 
 const CameraController = () => {
   const { camera, gl } = useThree();
@@ -37,7 +39,10 @@ const CameraController = () => {
 };
 
 const GamePage = () => {
-  const { sendMessage, isConnected } = useWebsocket("test");
+  const param = useParams();
+  // envからbaseUrlを取得
+  const baseUrl = import.meta.env.VITE_MOBILE_URL || "localhost:5173";
+  const { sendMessage, isConnected } = useWebsocket(param.roomCode || "test");
   const [onOff, setOnOff] = useState(false);
   const gameGrid = [
     [
@@ -74,20 +79,27 @@ const GamePage = () => {
   }, [isConnected]);
 
   return (
-    <Canvas>
-      <OrthographicCamera makeDefault zoom={50} near={0.1} far={1000} />
-      <CameraController />
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[5, 5, 5]} intensity={0.8} />
-      <directionalLight position={[-3, 2, 1]} intensity={0.4} />
-      <Stage grid={gameGrid} isOnOff={onOff} />
-      <Player
-        grid={gameGrid}
-        handleLever={() => setOnOff((prev) => !prev)}
-        isOnOff={onOff}
-        sendMessage={sendMessage}
+    <>
+      <Canvas>
+        <OrthographicCamera makeDefault zoom={50} near={0.1} far={1000} />
+        <CameraController />
+        <ambientLight intensity={0.3} />
+        <directionalLight position={[5, 5, 5]} intensity={0.8} />
+        <directionalLight position={[-3, 2, 1]} intensity={0.4} />
+        <Stage grid={gameGrid} isOnOff={onOff} />
+        <Player
+          grid={gameGrid}
+          handleLever={() => setOnOff((prev) => !prev)}
+          isOnOff={onOff}
+          sendMessage={sendMessage}
+        />
+      </Canvas>
+      <QRCode
+        value={baseUrl + "/game/" + param.roomCode}
+        size={128}
+        style={{ position: "fixed", top: 10, right: 10 }}
       />
-    </Canvas>
+    </>
   );
 };
 

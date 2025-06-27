@@ -30,8 +30,8 @@ const useWebsocket = (roomId: string) => {
     if (!roomId) return;
 
     // WebSocket の URL
-    const baseUrl = "localhost:8080";
-    const protocol = "ws";
+    const baseUrl = import.meta.env.VITE_WS_BASE_URL || "localhost:8080";
+    const protocol = import.meta.env.VITE_WS_PROTOCOL || "ws";
     const socket = new WebSocket(`${protocol}://${baseUrl}/mobile/${roomId}`);
     socketRef.current = socket;
 
@@ -47,10 +47,16 @@ const useWebsocket = (roomId: string) => {
         const data: DataMessage = JSON.parse(event.data);
         switch (data.type) {
           case "stage":
+            if (data.from !== "server") {
+              return; // サーバーからのメッセージのみ処理
+            }
             setStage(data.content as StageData);
             console.log("📬 Stage data updated:", data.content);
             break;
           case "player":
+            if (data.from !== "server") {
+              return; // サーバーからのメッセージのみ処理
+            }
             setPlayer(data.content as PlayerData);
             console.log("📬 Player data updated:", data.content);
             break;
