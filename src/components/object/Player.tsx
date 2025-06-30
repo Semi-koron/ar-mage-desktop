@@ -108,6 +108,8 @@ const Player: React.FC<PlayerProps> = ({
       grid[y][z][x] !== 4 &&
       grid[y][z][x] !== 5 &&
       grid[y][z][x] !== 6 &&
+      (grid[y][z][x] !== 7 || isOnOff) &&
+      (grid[y][z][x] !== 8 || !isOnOff) &&
       !(grid[y][z][x] >= 10 && grid[y][z][x] <= 15)
     );
   };
