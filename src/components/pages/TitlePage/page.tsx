@@ -17,6 +17,9 @@ function TitlePage() {
       <NavLink to={`/game/${roomCode}`}>
         <Button onClick={() => console.log(roomCode)}>Join Game</Button>
       </NavLink>
+      <NavLink to={`/edit`}>
+        <Button onClick={() => console.log(roomCode)}>Edit Game</Button>
+      </NavLink>
     </>
   );
 }

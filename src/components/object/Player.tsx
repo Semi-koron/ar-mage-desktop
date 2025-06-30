@@ -9,6 +9,8 @@ type BlockGrid = number[][][];
 interface PlayerProps {
   grid: BlockGrid;
   isOnOff: boolean; // オンオフブロックの状態を受け取る
+  initPos?: [number, number, number]; // 初期位置を受け取る（オプション）
+  initRot?: number; // 初期回転を受け取る（オプション）
   handleLever: () => void;
   sendMessage: (message: string) => void;
 }
@@ -16,12 +18,14 @@ interface PlayerProps {
 const Player: React.FC<PlayerProps> = ({
   grid,
   isOnOff,
+  initPos = [0, 1, 0],
+  initRot = 0,
   handleLever,
   sendMessage,
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
-  const [position, setPosition] = useState<[number, number, number]>([0, 0, 0]);
-  const [rotation, setRotation] = useState(0); // 0=北, 1=東, 2=南, 3=西
+  const [position, setPosition] = useState<[number, number, number]>(initPos);
+  const [rotation, setRotation] = useState(initRot); // 0=北, 1=東, 2=南, 3=西
   const textures = useTexture([
     "/assets/textures/cube/test1.png",
     "/assets/textures/cube/test2.png",
@@ -32,7 +36,7 @@ const Player: React.FC<PlayerProps> = ({
   ]);
 
   useEffect(() => {
-    const pos = gridToWorld(0, 1, 0);
+    const pos = gridToWorld(initPos[0], initPos[1], initPos[2]);
     setPosition(pos);
   }, []);
 
