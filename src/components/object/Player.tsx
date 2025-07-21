@@ -1,4 +1,10 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
@@ -11,6 +17,7 @@ interface PlayerProps {
   isOnOff: boolean; // オンオフブロックの状態を受け取る
   initPos?: [number, number, number]; // 初期位置を受け取る（オプション）
   initRot?: number; // 初期回転を受け取る（オプション）
+  setIsGoaled?: Dispatch<SetStateAction<boolean>>; // ゴール状態を更新する関数（オプション）
   handleLever: () => void;
   sendMessage: (message: string) => void;
 }
@@ -22,6 +29,7 @@ const Player: React.FC<PlayerProps> = ({
   initRot = 0,
   handleLever,
   sendMessage,
+  setIsGoaled = () => {}, // デフォルトは何もしない関数
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const [position, setPosition] = useState<[number, number, number]>(initPos);
@@ -38,6 +46,7 @@ const Player: React.FC<PlayerProps> = ({
   useEffect(() => {
     const pos = gridToWorld(initPos[0], initPos[1], initPos[2]);
     setPosition(pos);
+    sendMessage(JSON.stringify(makePlayerData(pos, initRot))); // 初期位置と回転を送信
   }, []);
 
   useEffect(() => {
@@ -303,6 +312,7 @@ const Player: React.FC<PlayerProps> = ({
               // ゴールに到達
               console.log("ゴールに到達しました！");
               const successAudio = new Audio("/assets/se/clear.mp3");
+              if (setIsGoaled) setIsGoaled(true); // ゴール状態を更新
               successAudio.play();
               return prev; // ゴールに到達した場合はそのままの位置
             }

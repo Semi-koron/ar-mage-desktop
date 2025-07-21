@@ -14,7 +14,7 @@ function TitlePage() {
         value={roomCode}
         onChange={(e) => setRoomCode(e.target.value)}
       />
-      <NavLink to={`/game/${roomCode}`}>
+      <NavLink to="/stage-select" state={{ roomCode }}>
         <Button onClick={() => console.log(roomCode)}>Join Game</Button>
       </NavLink>
       <NavLink to={`/edit`}>
