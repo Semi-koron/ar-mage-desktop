@@ -2,7 +2,6 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import TitlePage from "./components/pages/TitlePage/page";
 import StageSelectPage from "./components/pages/StageSelectPage/page";
-import GamePage from "./components/pages/GamePage/page";
 import EditPage from "./components/pages/EditPage/page";
 import GameStage1 from "./components/pages/GameStage1/page";
 import GameStage2 from "./components/pages/GameStage2/page";
