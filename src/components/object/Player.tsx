@@ -8,7 +8,8 @@ import React, {
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
-import { makePlayerData } from "../../util/websocketData";
+import { makePlayerData, makeStageData } from "../../util/websocketData";
+import type { DataMessage } from "../../types/websocket";
 
 type BlockGrid = number[][][];
 
@@ -19,7 +20,7 @@ interface PlayerProps {
   initRot?: number; // 初期回転を受け取る（オプション）
   setIsGoaled?: Dispatch<SetStateAction<boolean>>; // ゴール状態を更新する関数（オプション）
   handleLever: () => void;
-  sendMessage: (message: string) => void;
+  sendMessage: (message: DataMessage) => void;
 }
 
 const Player: React.FC<PlayerProps> = ({
@@ -44,14 +45,10 @@ const Player: React.FC<PlayerProps> = ({
   ]);
 
   useEffect(() => {
-    const pos = gridToWorld(initPos[0], initPos[1], initPos[2]);
-    setPosition(pos);
-    sendMessage(JSON.stringify(makePlayerData(pos, initRot))); // 初期位置と回転を送信
-  }, []);
-
-  useEffect(() => {
     const playerData = makePlayerData(position, rotation);
-    sendMessage(JSON.stringify(playerData));
+    const stageData = makeStageData(grid);
+    sendMessage(playerData);
+    sendMessage(stageData);
   }, [position, rotation]);
 
   // 方向ベクトル

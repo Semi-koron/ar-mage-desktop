@@ -1,23 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-
-type DataMessage = {
-  type: string;
-  content: StageData | PlayerData | GimickData;
-  from: string;
-};
-
-type StageData = {
-  stage: number[][][];
-};
-
-type PlayerData = {
-  rotation: number;
-};
-
-type GimickData = {
-  gimick: string;
-  data: boolean;
-};
+import type {
+  DataMessage,
+  GimickData,
+  PlayerData,
+  StageData,
+} from "../types/websocket";
 
 const useWebsocket = (roomId: string) => {
   const [stage, setStage] = useState<StageData | null>(null);
@@ -44,7 +31,7 @@ const useWebsocket = (roomId: string) => {
     // メッセージ受信
     socket.onmessage = (event) => {
       try {
-        const data: DataMessage = JSON.parse(event.data);
+        const data: DataMessage = event.data;
         switch (data.type) {
           case "stage":
             if (data.from !== "server") {
@@ -96,9 +83,9 @@ const useWebsocket = (roomId: string) => {
   }, [roomId]); // roomId が変更されるたびに WebSocket 接続を再作成
 
   // メッセージ送信
-  const sendMessage = (message: string) => {
+  const sendMessage = (message: DataMessage) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(message);
+      socketRef.current.send(JSON.stringify(message));
     } else {
       console.warn("❌ WebSocket is not open");
     }
