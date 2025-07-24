@@ -32,8 +32,24 @@ const Player: React.FC<PlayerProps> = ({
   sendMessage,
   setIsGoaled = () => {}, // デフォルトは何もしない関数
 }) => {
+  // グリッド座標からワールド座標に変換
+  const gridToWorld = (
+    x: number,
+    y: number,
+    z: number
+  ): [number, number, number] => {
+    if (!grid.length || !grid[0].length || !grid[0][0].length) return [0, 0, 0];
+
+    return [
+      x - Math.floor(grid[0][0].length / 2),
+      y - Math.floor(grid.length / 2),
+      z - Math.floor(grid[0].length / 2),
+    ];
+  };
   const meshRef = useRef<THREE.Mesh>(null);
-  const [position, setPosition] = useState<[number, number, number]>(initPos);
+  const [position, setPosition] = useState<[number, number, number]>(
+    gridToWorld(...initPos)
+  );
   const [rotation, setRotation] = useState(initRot); // 0=北, 1=東, 2=南, 3=西
   const textures = useTexture([
     "/assets/textures/cube/test1.png",
@@ -65,21 +81,6 @@ const Player: React.FC<PlayerProps> = ({
       default:
         return [0, 0, -1];
     }
-  };
-
-  // グリッド座標からワールド座標に変換
-  const gridToWorld = (
-    x: number,
-    y: number,
-    z: number
-  ): [number, number, number] => {
-    if (!grid.length || !grid[0].length || !grid[0][0].length) return [0, 0, 0];
-
-    return [
-      x - Math.floor(grid[0][0].length / 2),
-      y - Math.floor(grid.length / 2),
-      z - Math.floor(grid[0].length / 2),
-    ];
   };
 
   // ワールド座標からグリッド座標に変換
