@@ -1,8 +1,10 @@
+import type { DataMessage } from "../types/websocket";
+
 const makePlayerData = (
   position: [number, number, number],
   rotation: number
 ) => {
-  const data = {
+  const data: DataMessage = {
     type: "player",
     content: {
       position: position,
@@ -14,7 +16,7 @@ const makePlayerData = (
 };
 
 const makeStageData = (grid: number[][][]) => {
-  const data = {
+  const data: DataMessage = {
     type: "stage",
     content: {
       stage: grid,
@@ -25,7 +27,7 @@ const makeStageData = (grid: number[][][]) => {
 };
 
 const makeGimickData = (gimick: string, data: boolean) => {
-  const gimickData = {
+  const gimickData: DataMessage = {
     type: "gimick",
     content: {
       gimick: gimick,

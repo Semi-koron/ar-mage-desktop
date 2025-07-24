@@ -44,7 +44,7 @@ const GameStage4 = () => {
   const param = useParams();
   // envからbaseUrlを取得
   const baseUrl = import.meta.env.VITE_MOBILE_URL || "localhost:5173";
-  const { sendMessage, isConnected } = useWebsocket(param.roomCode || "test");
+  const { sendMessage } = useWebsocket(param.roomCode || "test");
   const [onOff, setOnOff] = useState(false);
   const [isGoaled, setIsGoaled] = useState(false);
   const gameGrid = [
@@ -87,27 +87,25 @@ const GameStage4 = () => {
 
   useEffect(() => {
     const onOffData = makeGimickData("onOff", onOff);
-    sendMessage(JSON.stringify(onOffData));
+    sendMessage(onOffData);
   }, [onOff]);
-
-  useEffect(() => {
-    if (!isConnected) return;
-    const stageData = makeStageData(gameGrid);
-    sendMessage(JSON.stringify(stageData));
-  }, [isConnected]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isGoaled) {
       const goalData = makeGimickData("goal", true);
-      sendMessage(JSON.stringify(goalData));
+      sendMessage(goalData);
       // ゴールパネルを表示するためのタイマーを設定
       timer = setTimeout(() => {
         setIsGoaled(false); // 一定時間後にゴール状態をリセット
         // ステージのデータをリセットするためのメッセージを送信
         const resetStageData = makeStageData([[[0]]]);
-        sendMessage(JSON.stringify(resetStageData));
-        navigate("/");
+        sendMessage(resetStageData);
+        navigate("/stage-select", {
+          state: {
+            roomCode: param.roomCode,
+          },
+        });
       }, 2000); // 2秒後にリセット
     }
     return () => {

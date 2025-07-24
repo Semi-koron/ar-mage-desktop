@@ -72,26 +72,26 @@ const GamePage = () => {
 
   useEffect(() => {
     const onOffData = makeGimickData("onOff", onOff);
-    sendMessage(JSON.stringify(onOffData));
+    sendMessage(onOffData);
   }, [onOff]);
 
   useEffect(() => {
     if (!isConnected) return;
     const stageData = makeStageData(gameGrid);
-    sendMessage(JSON.stringify(stageData));
+    sendMessage(stageData);
   }, [isConnected]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isGoaled) {
       const goalData = makeGimickData("goal", true);
-      sendMessage(JSON.stringify(goalData));
+      sendMessage(goalData);
       // ゴールパネルを表示するためのタイマーを設定
       timer = setTimeout(() => {
         setIsGoaled(false); // 一定時間後にゴール状態をリセット
         // ステージのデータをリセットするためのメッセージを送信
         const resetStageData = makeStageData([[[0]]]);
-        sendMessage(JSON.stringify(resetStageData));
+        sendMessage(resetStageData);
         navigate("/");
       }, 2000); // 2秒後にリセット
     }
