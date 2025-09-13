@@ -44,7 +44,7 @@ const GameStage1 = () => {
   const param = useParams();
   // envからbaseUrlを取得
   const baseUrl = import.meta.env.VITE_MOBILE_URL || "localhost:5173";
-  const { sendMessage } = useWebsocket(param.roomCode || "test");
+  const { sendMessage, isConnected } = useWebsocket(param.roomCode || "test");
   const [onOff, setOnOff] = useState(false);
   const [isGoaled, setIsGoaled] = useState(false);
   const gameGrid = [
@@ -119,6 +119,12 @@ const GameStage1 = () => {
   }, [onOff]);
 
   useEffect(() => {
+    if (!isConnected) return;
+    const stageData = makeStageData(gameGrid);
+    sendMessage(stageData);
+  }, [isConnected]);
+
+  useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isGoaled) {
       const goalData = makeGimickData("goal", true);
@@ -156,6 +162,7 @@ const GameStage1 = () => {
           isOnOff={onOff}
           sendMessage={sendMessage}
           setIsGoaled={setIsGoaled}
+          initPos={[0, 1, 0]}
         />
       </Canvas>
       {isGoaled && <GoalPanel />}
