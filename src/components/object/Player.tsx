@@ -8,7 +8,7 @@ import React, {
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
-import { makePlayerData, makeStageData } from "../../util/websocketData";
+import { makePlayerData } from "../../util/websocketData";
 import type { DataMessage } from "../../types/websocket";
 
 type BlockGrid = number[][][];
