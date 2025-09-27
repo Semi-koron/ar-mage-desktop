@@ -162,6 +162,7 @@ const GameStage3 = () => {
           isOnOff={onOff}
           sendMessage={sendMessage}
           setIsGoaled={setIsGoaled}
+          initPos={[7, 1, 7]}
         />
       </Canvas>
       {isGoaled && <GoalPanel />}
