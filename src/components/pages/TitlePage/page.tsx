@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styles from "./index.module.css";
 import Button from "../../feature/Button";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { NavLink } from "react-router-dom";
 
 function TitlePage() {
@@ -26,11 +25,8 @@ function TitlePage() {
           onChange={(e) => setRoomCode(e.target.value)}
           className={styles["input-style"]}
         />
-        <NavLink to={`/game/${roomCode}`}>
-          <Button onClick={() => console.log(roomCode)}>
-            Join Game
-            <ArrowForwardIcon className={styles["arrow-icon"]} />
-          </Button>
+        <NavLink to="/stage-select" state={{ roomCode }}>
+          <Button onClick={() => console.log(roomCode)}>Join Game</Button>
         </NavLink>
       </div>
     </div>

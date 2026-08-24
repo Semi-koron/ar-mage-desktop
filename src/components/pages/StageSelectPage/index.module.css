@@ -1,0 +1,130 @@
+.stage-select-page-wrapper {
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+}
+
+.stage-select-page-container {
+  width: min(100%, 760px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stage-select-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--white);
+}
+
+.stage-select-header h1 {
+  line-height: 1.1;
+  margin: 0;
+}
+
+.stage-select-header p {
+  margin: 0;
+}
+
+.eyebrow {
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.room-code-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  color: var(--white);
+}
+
+.room-code-field label {
+  font-weight: 700;
+}
+
+.room-code-field span {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  text-align: right;
+}
+
+.input-style {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  font: inherit;
+}
+
+.stage-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.stage-card {
+  min-height: 150px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 12%);
+  color: var(--white);
+}
+
+.stage-number {
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+.stage-card-content h2,
+.stage-card-content p {
+  margin: 0;
+}
+
+.stage-card-content h2 {
+  font-size: 1.3rem;
+}
+
+.stage-card-content p {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+.stage-card button {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.back-link {
+  align-self: center;
+}
+
+@media (max-width: 560px) {
+  .stage-select-page-wrapper {
+    align-items: flex-start;
+    padding-top: 24px;
+  }
+
+  .stage-select-header h1 {
+    font-size: 2.4rem;
+  }
+
+  .stage-grid {
+    grid-template-columns: 1fr;
+  }
+}

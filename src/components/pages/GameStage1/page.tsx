@@ -149,28 +149,28 @@ const GameStage1 = () => {
 
   return (
     <>
-      <Canvas>
-        <OrthographicCamera makeDefault zoom={50} near={0.1} far={1000} />
-        <CameraController />
-        <ambientLight intensity={0.3} />
-        <directionalLight position={[5, 5, 5]} intensity={0.8} />
-        <directionalLight position={[-3, 2, 1]} intensity={0.4} />
-        <Stage grid={gameGrid} isOnOff={onOff} />
-        <Player
-          grid={gameGrid}
-          handleLever={() => setOnOff((prev) => !prev)}
-          isOnOff={onOff}
-          sendMessage={sendMessage}
-          setIsGoaled={setIsGoaled}
-          initPos={[0, 1, 0]}
-        />
-      </Canvas>
-      {isGoaled && <GoalPanel />}
-      <QRCode
-        value={baseUrl + "/game/" + param.roomCode}
-        size={128}
-        style={{ position: "fixed", top: 10, right: 10 }}
-      />
+      <div style={{ width: "100vw", height: "100vh" }}>
+        <Canvas>
+          <OrthographicCamera makeDefault zoom={50} near={0.1} far={1000} />
+          <CameraController />
+          <ambientLight intensity={0.3} />
+          <directionalLight position={[5, 5, 5]} intensity={0.8} />
+          <directionalLight position={[-3, 2, 1]} intensity={0.4} />
+          <Stage grid={gameGrid} isOnOff={onOff} />
+          <Player
+            grid={gameGrid}
+            handleLever={() => setOnOff((prev) => !prev)}
+            isOnOff={onOff}
+            sendMessage={sendMessage}
+            setIsGoaled={setIsGoaled}
+            initPos={[0, 1, 0]}
+          />
+        </Canvas>
+        {isGoaled && <GoalPanel />}
+      </div>
+      <h2 style={{ position: "fixed", top: "32px", right: "32px" }}>
+        ルームID:{param.roomCode}
+      </h2>
     </>
   );
 };

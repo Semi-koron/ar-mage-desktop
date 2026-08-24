@@ -119,7 +119,7 @@ const GamePage = () => {
       </Canvas>
       {isGoaled && <GoalPanel />}
       <QRCode
-        value={baseUrl + "/game/" + param.roomCode}
+        value={baseUrl + "/game/" + }
         size={128}
         style={{ position: "fixed", top: 10, right: 10 }}
       />

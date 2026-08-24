@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Button from "../../feature/Button";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import styles from "./index.module.css";
 
 function StageSelectPage() {
   const [roomCode, setRoomCode] = useState("");
@@ -27,62 +28,52 @@ function StageSelectPage() {
   };
 
   return (
-    <>
-      <h1>Stage Select</h1>
-      <p>Room Code: {roomCode}</p>
+    <div className={styles["stage-select-page-wrapper"]}>
+      <div className={styles["stage-select-page-container"]}>
+        <header className={styles["stage-select-header"]}>
+          <p className={styles["eyebrow"]}>AR Maze Player</p>
+          <h1>Stage Select</h1>
+          <p>挑戦するステージを選んでね</p>
+        </header>
 
-      <div>
-        <label htmlFor="roomCode">Room Code:</label>
+        <div className={styles["room-code-field"]}>
+          <label htmlFor="roomCode">Room Code</label>
+          <span>
+            {roomCode.trim() ? "接続中" : "ルームコードを入力してください"}
+          </span>
+        </div>
         <input
           id="roomCode"
           type="text"
           placeholder="Enter room code"
           value={roomCode}
           onChange={(e) => setRoomCode(e.target.value)}
+          className={styles["input-style"]}
         />
-      </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gap: "1rem",
-          margin: "2rem 0",
-        }}
-      >
-        {stages.map((stage) => (
-          <div
-            key={stage.id}
-            style={{
-              border: "1px solid #ccc",
-              padding: "1rem",
-              borderRadius: "8px",
-            }}
-          >
-            <h3>{stage.name}</h3>
-            <p>{stage.description}</p>
-            <button
-              onClick={() => handleStageSelect(stage.id)}
-              disabled={!roomCode.trim()}
-              style={{
-                padding: "0.5rem 1rem",
-                backgroundColor: !roomCode.trim() ? "#ccc" : "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: !roomCode.trim() ? "not-allowed" : "pointer",
-              }}
-            >
-              Play {stage.name}
-            </button>
-          </div>
-        ))}
-      </div>
+        <div className={styles["stage-grid"]}>
+          {stages.map((stage) => (
+            <article key={stage.id} className={styles["stage-card"]}>
+              <div className={styles["stage-number"]}>0{stage.id}</div>
+              <div className={styles["stage-card-content"]}>
+                <h2>{stage.name}</h2>
+                <p>{stage.description}</p>
+              </div>
+              <Button
+                onClick={() => handleStageSelect(stage.id)}
+                disabled={!roomCode.trim()}
+              >
+                Play
+              </Button>
+            </article>
+          ))}
+        </div>
 
-      <NavLink to="/">
-        <Button>Back to Title</Button>
-      </NavLink>
-    </>
+        <NavLink to="/" className={styles["back-link"]}>
+          <Button>Back to Title</Button>
+        </NavLink>
+      </div>
+    </div>
   );
 }
 
