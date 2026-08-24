@@ -82,7 +82,7 @@ const GamePage = () => {
   }, [isConnected]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
     if (isGoaled) {
       const goalData = makeGimickData("goal", true);
       sendMessage(goalData);
@@ -119,7 +119,7 @@ const GamePage = () => {
       </Canvas>
       {isGoaled && <GoalPanel />}
       <QRCode
-        value={baseUrl + "/game/" + }
+        value={baseUrl + "/game/" + param.roomCode}
         size={128}
         style={{ position: "fixed", top: 10, right: 10 }}
       />

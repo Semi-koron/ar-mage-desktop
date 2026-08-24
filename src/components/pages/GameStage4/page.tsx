@@ -97,7 +97,7 @@ const GameStage4 = () => {
   }, [isConnected]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
     if (isGoaled) {
       const goalData = makeGimickData("goal", true);
       sendMessage(goalData);

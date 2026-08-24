@@ -10,7 +10,7 @@ const GoalPanel = () => {
         textAlign: "center",
       }}
     >
-      <img src="/images/gary.jpg" alt="Goal Image" />
+      <img src="/images/goal.png" alt="Goal Image" />
     </div>
   );
 };

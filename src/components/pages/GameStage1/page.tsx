@@ -6,7 +6,6 @@ import Player from "../../object/Player";
 import useWebsocket from "../../../hooks/useWebsocket";
 import { makeGimickData, makeStageData } from "../../../util/websocketData";
 import { useNavigate, useParams } from "react-router-dom";
-import QRCode from "react-qr-code";
 import GoalPanel from "../../feature/GoalPanel";
 
 const CameraController = () => {
@@ -42,8 +41,6 @@ const CameraController = () => {
 const GameStage1 = () => {
   const navigate = useNavigate();
   const param = useParams();
-  // envからbaseUrlを取得
-  const baseUrl = import.meta.env.VITE_MOBILE_URL || "localhost:5173";
   const { sendMessage, isConnected } = useWebsocket(param.roomCode || "test");
   const [onOff, setOnOff] = useState(false);
   const [isGoaled, setIsGoaled] = useState(false);
@@ -125,7 +122,7 @@ const GameStage1 = () => {
   }, [isConnected]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
     if (isGoaled) {
       const goalData = makeGimickData("goal", true);
       sendMessage(goalData);
