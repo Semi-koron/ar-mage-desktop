@@ -1,4 +1,4 @@
-button {
+.button {
   border-radius: 8px;
   border: 1px solid var(--white);
   padding: 0.6em 1.2em;
@@ -12,14 +12,10 @@ button {
   align-items: center;
   gap: 10px;
 }
-button:hover {
+.button:hover {
   background-color: var(--primary-color-hover);
 }
-button:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-button:focus,
-button:focus-visible {
+.button:focus,
+.button:focus-visible {
   outline: 4px auto var(--secondary-color);
 }
